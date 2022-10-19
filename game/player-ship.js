@@ -12,7 +12,7 @@ import { BulletDef } from "./bullet.js";
 import { DeletedDef } from "../delete.js";
 import { clamp, min } from "../math.js";
 import { createCannon } from "./cannon.js";
-import { MusicDef } from "../music.js";
+import { AudioDef } from "../audio.js";
 import { LocalPlayerDef, PlayerDef } from "./player.js";
 import { CameraDef } from "../camera.js";
 import { InputsDef } from "../inputs.js";
@@ -234,7 +234,7 @@ export function registerShipSystems(em) {
         }
     }, "startGame");
     const raiseShipHit = eventWizard("ship-hit", [[PlayerShipLocalDef]], ([ship], partIdx) => {
-        const music = em.getResource(MusicDef);
+        const music = em.getResource(AudioDef);
         const part = ship.playerShipLocal.parts[partIdx]();
         part.renderable.enabled = false;
         part.shipPart.damaged = true;
@@ -245,7 +245,7 @@ export function registerShipSystems(em) {
         deserializeExtra: (buf) => buf.readUint8(),
     });
     em.registerSystem([PlayerShipPropsDef, PlayerShipLocalDef, PositionDef, AuthorityDef], [
-        MusicDef,
+        AudioDef,
         InputsDef,
         CameraDef,
         GameStateDef,

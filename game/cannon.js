@@ -11,7 +11,7 @@ import { InRangeDef } from "./interact.js";
 import { LocalPlayerDef, PlayerDef } from "./player.js";
 import { AssetsDef } from "./assets.js";
 import { WorldFrameDef } from "../physics/nonintersection.js";
-import { MusicDef, randChordId } from "../music.js";
+import { AudioDef, randChordId } from "../audio.js";
 import { InputsDef } from "../inputs.js";
 import { DeletedDef } from "../delete.js";
 import { defineNetEntityHelper } from "../em_helpers.js";
@@ -83,7 +83,7 @@ export function registerCannonSystems(em) {
         // but everyone resets the cooldown and plays sound effects
         cannon.cannonLocal.fireMs = cannon.cannonLocal.fireDelayMs;
         const chord = randChordId();
-        EM.getResource(MusicDef).playChords([chord], "major", 2.0, 3.0, -2);
+        EM.getResource(AudioDef).playChords([chord], "major", 2.0, 3.0, -2);
     }, {
         legalEvent: ([player, cannon]) => {
             return cannon.cannonLocal.fireMs <= 0;

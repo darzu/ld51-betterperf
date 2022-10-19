@@ -1,4 +1,4 @@
-import { GPU_DBG_PERF, VERBOSE_LOG } from "../flags.js";
+import { PERF_DBG_GPU, VERBOSE_LOG } from "../flags.js";
 import { assert } from "../util.js";
 import { never, capitalize, pluralize, uncapitalize, isString, isFunction, } from "../util.js";
 import { createCyArray, createCySingleton, createCyIdxBuf, createCyTexture, createCyDepthTexture, } from "./data-webgpu.js";
@@ -155,7 +155,7 @@ export function createCyResources(cy, shaders, device) {
         const lengthOrData = typeof r.init === "number" ? r.init : r.init();
         const buf = createCyArray(device, r.struct, usage, lengthOrData);
         kindToNameToRes.array[r.name] = buf;
-        if (GPU_DBG_PERF) {
+        if (PERF_DBG_GPU) {
             console.log(`CyArray ${r.name}: ${r.struct.size * buf.length}b`);
         }
     });
@@ -164,7 +164,7 @@ export function createCyResources(cy, shaders, device) {
         const usage = cyNameToBufferUsage[r.name];
         const buf = createCySingleton(device, r.struct, usage, r.init ? r.init() : undefined);
         kindToNameToRes.singleton[r.name] = buf;
-        if (GPU_DBG_PERF) {
+        if (PERF_DBG_GPU) {
             console.log(`CySingleton ${r.name}: ${r.struct.size}b`);
         }
     });
@@ -172,7 +172,7 @@ export function createCyResources(cy, shaders, device) {
     cy.kindToPtrs.idxBuffer.forEach((r) => {
         const buf = createCyIdxBuf(device, r.init());
         kindToNameToRes.idxBuffer[r.name] = buf;
-        if (GPU_DBG_PERF) {
+        if (PERF_DBG_GPU) {
             console.log(`CyIdx ${r.name}: ${buf.size}b`);
         }
     });

@@ -4,7 +4,7 @@ import { isNumber } from "../util.js";
 import { texTypeIsStencil, texTypeToBytes, } from "./gpu-struct.js";
 import { isRenderPipelinePtr, } from "./gpu-registry.js";
 import { GPUBufferUsage } from "./webgpu-hacks.js";
-import { GPU_DBG_PERF } from "../flags.js";
+import { PERF_DBG_GPU } from "../flags.js";
 export function isRenderPipeline(p) {
     return isRenderPipelinePtr(p.ptr);
 }
@@ -38,7 +38,7 @@ export function createCySingleton(device, struct, usage, initData) {
         const b = struct.serialize(data);
         assertDbg(b.byteLength % 4 === 0, `alignment`);
         device.queue.writeBuffer(_buf, 0, b);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _gpuQueueBufferWriteBytes += b.byteLength;
     }
     function binding(idx, plurality) {
@@ -90,7 +90,7 @@ export function createCyArray(device, struct, usage, lenOrData) {
         assertDbg(bufOffset % 4 === 0, `alignment`);
         assertDbg(b.length % 4 === 0, `alignment`);
         device.queue.writeBuffer(_buf, bufOffset, b);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _gpuQueueBufferWriteBytes += b.length;
     }
     // TODO(@darzu): somewhat hacky way to reuse Uint8Arrays here; we could do some more global pool
@@ -115,7 +115,7 @@ export function createCyArray(device, struct, usage, lenOrData) {
         assertDbg(dataSize % 4 === 0, `alignment`);
         assertDbg(bufOffset % 4 === 0, `alignment`);
         device.queue.writeBuffer(_buf, bufOffset, serialized, 0, dataSize);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _gpuQueueBufferWriteBytes += dataSize;
     }
     function binding(idx, plurality) {
@@ -155,7 +155,7 @@ export function createCyIdxBuf(device, lenOrData) {
         assertDbg(data.byteLength % 4 === 0, `alignment`);
         assertDbg(startByte % 4 === 0, `alignment`);
         device.queue.writeBuffer(_buf, startByte, data);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _gpuQueueBufferWriteBytes += data.byteLength;
     }
     return buf;
@@ -180,7 +180,7 @@ export function createCyTexture(device, ptr, usage) {
     resize(size[0], size[1]);
     if (init) {
         const data = init();
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             console.log(`creating texture of size: ${(data.length * 4) / 1024}kb`);
         queueUpdate(data);
     }

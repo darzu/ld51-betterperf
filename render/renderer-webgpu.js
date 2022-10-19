@@ -7,8 +7,10 @@ import { texTypeToBytes } from "./gpu-struct.js";
 import { pointLightsPtr } from "./lights.js";
 import { gerstnerWavesPtr, oceanPoolPtr, } from "./pipelines/std-ocean.js";
 import { GPUBufferUsage } from "./webgpu-hacks.js";
-import { GPU_DBG_PERF } from "../flags.js";
+import { PERF_DBG_GPU, VERBOSE_LOG } from "../flags.js";
 import { dbgLogOnce } from "../util.js";
+// TODO(@darzu): Try using drawIndirect !!
+//    https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-drawindirect
 const MAX_PIPELINES = 64;
 export function createRenderer(canvas, device, context, shaders) {
     const timestampQuerySet = device.features.has("timestamp-query")
@@ -17,7 +19,8 @@ export function createRenderer(canvas, device, context, shaders) {
             count: MAX_PIPELINES + 1, // start of execution + after each pipeline
         })
         : null;
-    console.log(`timestamp-query: ${!!timestampQuerySet}`);
+    if (VERBOSE_LOG)
+        console.log(`timestamp-query: ${!!timestampQuerySet}`);
     const resources = createCyResources(CY, shaders, device);
     const cyKindToNameToRes = resources.kindToNameToRes;
     const stdPool = cyKindToNameToRes.meshPool[meshPoolPtr.name];
@@ -100,7 +103,7 @@ export function createRenderer(canvas, device, context, shaders) {
         }
     }
     function updateScene(scene) {
-        if (GPU_DBG_PERF) {
+        if (PERF_DBG_GPU) {
             dbgLogOnce("sceneUniSize", `SceneUni size: ${sceneUni.struct.size}`);
         }
         sceneUni.queueUpdate({
@@ -118,7 +121,7 @@ export function createRenderer(canvas, device, context, shaders) {
     function submitPipelines(handles, pipelinePtrs) {
         // TODO(@darzu): a lot of the smarts of this fn should come out and be an explicit part
         //  of some pipeline sequencer-timeline-composition-y description thing
-        if (!pipelinePtrs.length) {
+        if (VERBOSE_LOG && !pipelinePtrs.length) {
             console.warn("rendering without any pipelines specified");
             return;
         }
@@ -170,7 +173,8 @@ export function createRenderer(canvas, device, context, shaders) {
             }
         }
         if (needsRebundle) {
-            // console.log("rebundeling");
+            if (PERF_DBG_GPU)
+                console.log("rebundeling");
             updateRenderBundle(handles, renderPipelines);
         }
         lastPipelines = pipelines;

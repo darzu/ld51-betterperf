@@ -165,7 +165,7 @@ function updateEnts() {
     }
 }
 function filterEnts(...cmpNames) {
-    return EM.filterEntitiesByKey(cmpNames);
+    return EM.dbgFilterEntitiesByKey(cmpNames);
 }
 function cmpByName(name) {
     let res = dbgCmps.get(name) ?? dbgCmpsAllByAbv.get(name);
@@ -230,7 +230,7 @@ g.cameraFollow.pitchOffset = ${target.cameraFollow.pitchOffset.toFixed(3)};
         return cmpByName(name);
     },
     summarizeStats: () => {
-        let stats = EM.stats;
+        let stats = EM.sysStats;
         let totalQueryTime = Object.values(stats)
             .map((s) => s.queryTime)
             .reduce((x, y) => x + y);
@@ -249,17 +249,17 @@ g.cameraFollow.pitchOffset = ${target.cameraFollow.pitchOffset.toFixed(3)};
             out +=
                 s +
                     ": " +
-                    ((t * 100) / totalTime).toPrecision(2) +
+                    ((t * 100) / totalTime).toFixed(1) +
                     "%" +
                     " (" +
-                    (t / EM.loops).toPrecision(2) +
+                    (t / EM.loops).toFixed(2) +
                     "ms, max:" +
-                    m.toPrecision(2) +
+                    m.toFixed(1) +
                     "ms)" +
                     "\n";
         }
         out += "\n";
-        out += "time per frame: " + (totalTime / EM.loops).toPrecision(3) + "ms";
+        out += "time per frame: " + (totalTime / EM.loops).toFixed(3) + "ms";
         console.log(out);
     },
 };

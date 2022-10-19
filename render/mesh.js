@@ -1,6 +1,6 @@
 import { ASSET_LOG_VERT_CHANGES } from "../flags.js";
 import { vec3, vec2, vec4 } from "../gl-matrix.js";
-import { getAABBFromPositions } from "../physics/broadphase.js";
+import { createAABB, getAABBFromPositions, } from "../physics/broadphase.js";
 import { assert } from "../util.js";
 import { arrayUnsortedEqual } from "../util.js";
 import { vec3Mid } from "../utils-3d.js";
@@ -313,7 +313,7 @@ export function normalizeMesh(inM) {
     };
 }
 export function getAABBFromMesh(m) {
-    return getAABBFromPositions(m.pos);
+    return getAABBFromPositions(createAABB(), m.pos);
 }
 export function getCenterFromAABB(aabb) {
     return vec3Mid(vec3.create(), aabb.min, aabb.max);

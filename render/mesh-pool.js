@@ -1,6 +1,6 @@
 import { align, alignDown } from "../math.js";
 import { assert, assertDbg } from "../util.js";
-import { GPU_DBG_PERF, VERBOSE_MESH_POOL_STATS } from "../flags.js";
+import { PERF_DBG_GPU, VERBOSE_MESH_POOL_STATS } from "../flags.js";
 // Mesh: lossless, all the data of a model/asset from blender
 // MeshPool: lossy, a reduced set of attributes for vertex, line, triangle, and model uniforms
 const vertsPerTri = 3;
@@ -166,14 +166,14 @@ export function createMeshPool(opts) {
             assertDbg(triData.byteLength % 4 === 0, "alignment");
             // NOTE: CALLERS to queueUpdate must be 4-byte aligned
             opts.triInds.queueUpdate(triData, handle.triIdx * 3);
-            if (GPU_DBG_PERF)
+            if (PERF_DBG_GPU)
                 _stats._accumTriDataQueued += triData.length * 2.0;
         }
         if (m.quad.length) {
             const quadData = computeQuadData(m, 0, m.quad.length);
             const quadStartIdx = align((handle.triIdx + m.tri.length) * 3, 2);
             opts.triInds.queueUpdate(quadData, quadStartIdx);
-            if (GPU_DBG_PERF)
+            if (PERF_DBG_GPU)
                 _stats._accumTriDataQueued += quadData.length * 2.0;
         }
         // add lines
@@ -193,7 +193,7 @@ export function createMeshPool(opts) {
         // initial uniform data
         const uni = opts.computeUniData(m);
         opts.unis.queueUpdate(uni, handle.uniIdx);
-        if (GPU_DBG_PERF) {
+        if (PERF_DBG_GPU) {
             _stats._accumVertDataQueued += m.pos.length * opts.verts.struct.size;
             _stats._accumUniDataQueued += opts.unis.struct.size;
         }
@@ -226,7 +226,7 @@ export function createMeshPool(opts) {
         vertCount = vertCount ?? newMesh.pos.length;
         const data = opts.computeVertsData(newMesh, vertIdx, vertCount);
         opts.verts.queueUpdates(data, handle.vertIdx + vertIdx, 0, vertCount);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _stats._accumVertDataQueued += vertCount * opts.verts.struct.size;
     }
     function updateMeshTriangles(handle, newMesh, triIdx, triCount) {
@@ -247,7 +247,7 @@ export function createMeshPool(opts) {
         const triData = computeTriData(newMesh, alignedTriIdx, alignedTriCount);
         assertDbg(triData.byteLength % 4 === 0, "alignment");
         opts.triInds.queueUpdate(triData, (handle.triIdx + alignedTriIdx) * 3);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _stats._accumTriDataQueued += triData.length * 2.0;
     }
     function updateMeshQuads(handle, newMesh, quadIdx, quadCount) {
@@ -259,12 +259,12 @@ export function createMeshPool(opts) {
         assertDbg(bufQuadIdx % 2 === 0);
         assertDbg(quadData.length % 2 === 0);
         opts.triInds.queueUpdate(quadData, bufQuadIdx);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _stats._accumTriDataQueued += quadData.byteLength;
     }
     function updateUniform(m, d) {
         opts.unis.queueUpdate(d, m.uniIdx);
-        if (GPU_DBG_PERF)
+        if (PERF_DBG_GPU)
             _stats._accumUniDataQueued += opts.unis.struct.size;
     }
     return pool;

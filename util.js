@@ -133,10 +133,10 @@ export function toBinary(n, digits = 32) {
     return s;
 }
 let _logOnceKeys = new Set();
-export function dbgLogOnce(key, msg) {
+export function dbgLogOnce(key, msg, warn = false) {
     if (!_logOnceKeys.has(key)) {
         _logOnceKeys.add(key);
-        console.log(msg ?? key);
+        console[warn ? "warn" : "log"](msg ?? key);
     }
 }
 export function dbgDirOnce(key, obj) {
