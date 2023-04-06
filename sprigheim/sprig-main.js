@@ -252,7 +252,7 @@ const computeForFS = `
     [[builtin(local_invocation_id)]] localId : vec3<u32>,
     [[builtin(global_invocation_id)]] globalId : vec3<u32>
   ) {
-    let dims : vec2<i32> = textureDimensions(output);
+    let dims : vec2<i32> = vec2<i32>(textureDimensions(output));
 
     let col: u32 = (groupId.x * 8u) + localId.x;
     let row: u32 = (groupId.y * 8u) + localId.y;

@@ -79,7 +79,7 @@ fragSnippet, libs) {
 
     @fragment
     fn frag_main(@location(0) uv : vec2<f32>) -> @location(0) ${returnWgslType} {
-      let dimsI : vec2<i32> = textureDimensions(inTex);
+      let dimsI : vec2<i32> = vec2<i32>(textureDimensions(inTex));
       let dimsF = vec2<f32>(dimsI);
       let xy = vec2<i32>(uv * dimsF);
       ${

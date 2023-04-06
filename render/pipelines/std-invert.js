@@ -56,7 +56,7 @@ export function createInvertPipeline(name, inTex, outTex, fragShader) {
             // TODO(@darzu): don't like this...
             inTexIsUnfilterable
                 ? `
-        let dims : vec2<i32> = textureDimensions(myTexture);
+        let dims : vec2<i32> = vec2<i32>(textureDimensions(myTexture));
         let intUV = vec2<i32>(fragUV * vec2<f32>(dims));
         let res = textureLoad(myTexture, intUV, 0);
         `
